@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stress Level Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+    overflow: hidden;
+    background-color: black;
+}
+
+.covervideo {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.covervideo video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: 100%;
+    height: auto;
+}
+
+.content2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.content2 h1 {
+    font-size: 6vw;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.content2 a {
+    text-decoration: none;
+    display: inline-block;
+    color: #fff;
+    font-size: 1.5vw;
+    border: 2px solid #fff;
+    padding: 1vw 3vw;
+    border-radius: 50px;
+}
+
+.input-section {
+    display: none;
+    text-align: center;
+    color: white;
+    margin-top: 50px;
+}
+.input-section input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="covervideo" id="covervideo">
+        <video autoplay loop muted plays-inline class="coverpagevideo">
+            <source src="{{ url_for('static', filename='stress.mp4') }}" type="video/mp4">
+        </video>
+        <div class="content2">
+            <h1>STRESS DETECTION</h1>
+            <a href="" id="startLink">Start here</a>
+        </div>
+    </div>
+    <div class="input-section" id="inputSection">
+        <h1>Stress Predictor</h1>
+        <form method="post" action="/predict">
+            <label for="user_input">Enter Text:</label><br>
+            <input type="text" id="user_input" name="user_input" autocomplete="off" ><br><br>
+            <input type="submit" value="Predict">
+        </form>
+        <div id="result"></div>
+        <h1 id="display"></h1>
+    </div>
+
+    <script>
+        function toggleVisibility() {
+            const inputSection = document.getElementById('inputSection');
+            const video = document.getElementById('covervideo');
+            if (inputSection.style.display === 'none') {
+                inputSection.style.display = 'block';
+                video.style.display = 'none'
+            } else {
+                inputSection.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('startLink').addEventListener('click', function (e) {
+            e.preventDefault();
+            toggleVisibility();
+        });
+
+        document.querySelector('form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const prediction = await response.text();
+            let image_url;
+           
+
+            const resultDiv=document.getElementById('result');
+            const imagediv=document.getElementById('display');
+            if (prediction==1)
+            {
+                imagediv.innerHTML="unhappy";
+            }
+            else{
+                imagediv.innerHTML="happy";
+            }
+            
+          
+        });
+    </script>
+</body>
+
+</html>
